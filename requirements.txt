@@ -1,0 +1,5 @@
+pandas
+kiteconnect
+datetime
+time
+copy
