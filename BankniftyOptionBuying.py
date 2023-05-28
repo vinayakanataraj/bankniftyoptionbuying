@@ -2,7 +2,9 @@ import copy
 import pandas as pd
 from kiteconnect import KiteConnect
 from time import sleep
-from datetime import time, datetime
+from datetime import time, datetime, timedelta
+import webbrowser
+import yfinance as yf
 
 
 class BankNiftyOptionBuying:
@@ -148,13 +150,29 @@ def user_info():
     api_secret = input("Enter the Secret key: ")
     kite = KiteConnect(api_key=api_key)
     print("Login here :", kite.login_url())
+    url = kite.login_url()
+    webbrowser.open_new_tab(f"{url}")
     req_tkn = input("Enter request token here : ")
     gen_ssn = kite.generate_session(request_token=req_tkn, api_secret=api_secret)
     acc_tkn = gen_ssn['access_token']
     access_token = str(acc_tkn)
     no_of_lots_to_trade = int(float(input("Enter no of lots to trade: ")))
-    spot_prev_day_high = float(input("Enter BankNifty PrevDay High: "))
-    spot_prev_day_low = float(input("Enter BankNifty PrevDay Low: "))
+    # Get today's date
+    current_date = datetime.now().strftime('%Y-%m-%d')
+
+    # Calculate the previous trading day
+    previous_trading_day = (datetime.now() - timedelta(1)).strftime('%Y-%m-%d')
+
+    # Fetch BankNifty data for the previous trading day
+    banknifty = yf.download('^NSEBANK', start=previous_trading_day, end=previous_trading_day)
+
+    # Get the previous trading day's high and low prices
+    previous_high = round((banknifty['High'][0]), 2)
+    previous_low = round((banknifty['Low'][0]), 2)
+
+
+    spot_prev_day_high = previous_high
+    spot_prev_day_low = previous_low
     return {"api_key": api_key, "access_token": access_token, "lotstotrade": no_of_lots_to_trade,
             "prev_day_high": spot_prev_day_high, "prev_day_low": spot_prev_day_low}
 
