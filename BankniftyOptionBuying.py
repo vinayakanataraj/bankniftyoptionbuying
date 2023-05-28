@@ -145,7 +145,13 @@ class BankNiftyOptionBuying:
 def user_info():
     print("----BankNifty Option Buying Algo Started----")
     api_key = input("Enter Kite Api Key: ")
-    access_token = input("Enter Kite Access Token: ")
+    api_secret = input("Enter the Secret key: ")
+    kite = KiteConnect(api_key=api_key)
+    print("Login here :", kite.login_url())
+    req_tkn = input("Enter request token here : ")
+    gen_ssn = kite.generate_session(request_token=req_tkn, api_secret=api_secret)
+    acc_tkn = gen_ssn['access_token']
+    access_token = str(acc_tkn)
     no_of_lots_to_trade = int(float(input("Enter no of lots to trade: ")))
     spot_prev_day_high = float(input("Enter BankNifty PrevDay High: "))
     spot_prev_day_low = float(input("Enter BankNifty PrevDay Low: "))
@@ -161,3 +167,5 @@ bob = BankNiftyOptionBuying(api_key=info["api_key"],
                             spot_prev_day_high=info["prev_day_high"],
                             spot_prev_day_low=info["prev_day_low"])
 bob.strategy()
+
+
